@@ -139,7 +139,7 @@
       </div>
       <div class="footer__bottom">
         <div class="footer__logo">
-          <img src="/static/logo.svg" alt="" />
+          <img src="~/assets/images/logo.svg" alt="" />
           <p class="footer__copyright">
             © WellFitness. 2007 Все права защищены
           </p>

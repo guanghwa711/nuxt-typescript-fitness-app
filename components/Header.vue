@@ -4,7 +4,7 @@
       <div class="container">
         <div class="header-top__inner">
           <nuxt-link class="logo" to="/">
-            <img src="static/logo.svg" alt="logo" />
+            <img src="~/assets/images/logo.svg" alt="logo" />
           </nuxt-link>
           <div class="city">Сумы</div>
           <div class="partners">

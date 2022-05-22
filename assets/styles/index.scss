@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap');
+
+@import 'reset';
+@import 'variables';
+@import 'mixins';
+
+h1{@include h1;}h2{@include h2;}h3{@include h3;}
+
+button {
+	@include button;
+	background-color: $red;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	.active {
+		background-color: #fff;
+		color: $red;
+	};
+	&:hover {
+		background-color: $hover;
+	}
+}
+
+body {
+	font-family: 'Inter', sans-serif;
+	font-size: 16px;
+	font-weight: 400;
+	line-height: 150%;
+	color: #000;
+	background-color: $bg;
+}
+
+.container {
+	max-width: 1440px;
+	margin: 0 auto;
+	padding: 0 15px;
+}
+
+.menu {
+	@include menu;
+}
+
+.footer-menu {
+	@include footer-menu;
+}

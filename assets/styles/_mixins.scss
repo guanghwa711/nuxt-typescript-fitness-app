@@ -1,0 +1,68 @@
+@mixin h1 {
+	font-size: 38px;
+	font-weight: 800;
+	line-height: 110%;
+
+	@media (max-width: 960px) {
+		font-size: 30px;
+	}
+
+	@media (max-width: 440px) {
+		font-size: 24px;
+	}
+}
+
+@mixin h2 {
+	font-size: 30px;
+	font-weight: 700;
+	line-height: 110%;
+
+	@media (max-width: 960px) {
+		font-size: 26px;
+	}
+
+	@media (max-width: 440px) {
+		font-size: 22px;
+	}
+}
+
+@mixin h3 {
+	font-size: 20px;
+	font-weight: 800;
+	line-height: 120%;
+
+	@media (max-width: 960px) {
+		font-size: 16px;
+	}
+
+	@media (max-width: 440px) {
+		font-size: 13px;
+	}
+}
+
+@mixin txt18 {
+	font-size: 18px;
+	line-height: 150%;
+}
+
+@mixin menu {
+	font-size: 14px;
+	font-weight: 400;
+	line-height: 140%;
+	color: #fff;
+}
+
+@mixin footer-menu {
+	font-size: 16px;
+	font-weight: 500;
+	line-height: 130%;
+	color: #858FA4;
+}
+
+@mixin button {
+	font-size: 14px;
+	font-weight: 700;
+	@media (max-width: 440px) {
+		font-size: 12px;
+	}
+}

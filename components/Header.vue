@@ -12,7 +12,9 @@
             <button class="partners__btn">Стать партнером</button>
           </div>
           <div class="phone">
-            <a class="phone__num" href="tel:380971799663">+38 (097) 179-96-63</a>
+            <a class="phone__num" href="tel:380971799663"
+              >+38 (097) 179-96-63</a
+            >
             <div class="phone__callback">Заказать звонок</div>
           </div>
           <div class="auth">
@@ -149,6 +151,12 @@
         </div>
       </div>
     </div>
+    <div class="header-for">
+      <div class="container">
+        <div class="header-for__item">Для дома</div>
+        <div class="header-for__item">Для фитнес клуба</div>
+      </div>
+    </div>
   </header>
 </template>
 
@@ -177,6 +185,47 @@ export default {};
       display: flex;
       justify-content: space-between;
       align-items: center;
+    }
+  }
+  &-for {
+    padding: 12px 0;
+    background-color: #2a2c38;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    &__item {
+      display: inline-block;
+      position: relative;
+      cursor: pointer;
+      margin-right: 20px;
+      padding-right: 16px;
+      &::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 50%;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-top: 4px solid #fff;
+      }
+      & + & {
+        padding-left: 20px;
+        &::before {
+          content: "";
+          width: 1px;
+          height: 30px;
+          background-color: rgba(#fff, 0.15);
+          position: absolute;
+          left: 0;
+          top: 0;
+        }
+      }
+      &:hover {
+        color: darken(#fff, 10%);
+        &::after {
+          border-top-color: darken(#fff, 10%);
+        }
+      }
     }
   }
 }

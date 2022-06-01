@@ -31,4 +31,13 @@ export default defineNuxtConfig({
 			'process.env.DEBUG': false,
 		},
 	},
+
+	publicRuntimeConfig: {
+		API_URL: process.env.API_URL
+	},
+
+	buildModules: ['@nuxtjs/strapi'],
+	strapi: {
+		url: process.env.API_URL || 'http://localhost:1337',
+	}
 })

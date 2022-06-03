@@ -114,20 +114,13 @@
     </div>
     <auth-login :show="loginPopup" @close="loginPopup = false" @forgot="showForgotPopup"
       @register="showRegisterPopup" />
-    <auth-forgot :show="forgotPopup" @close="forgotPopup = false" />
     <auth-register :show="registerPopup" @close="registerPopup = false" />
   </header>
 </template>
 
 <script setup>
 const loginPopup = ref(false)
-const forgotPopup = ref(false)
 const registerPopup = ref(false)
-
-function showForgotPopup() {
-  loginPopup.value = false
-  forgotPopup.value = true
-}
 
 function showRegisterPopup() {
   loginPopup.value = false

@@ -1,6 +1,6 @@
 <template>
 	<div class="home">
-		home
+    <v-icon icon="md:home"></v-icon>
 	</div>
 </template>
 
@@ -14,5 +14,6 @@ export default {
 @import '/assets/styles/_variables';
 .home {
  background-color: orange;
+ padding: 200px 0;
 }
 </style>

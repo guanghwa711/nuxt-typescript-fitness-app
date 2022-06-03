@@ -1,74 +1,37 @@
 <template>
-  <div class="admin-layout">
-    <header class="header">
-      <div class="container">
-        <nuxt-link class="logo" to="/">
-          <img src="~/assets/images/logo.svg" alt="" />
-        </nuxt-link>
-      </div>
-    </header>
-    <aside class="aside">
-      <Sidebar class="sidebar" :visible="true" :modal="false" :showCloseIcon="false" :autoZIndex="false">
-        <div class="sidebar__inner">
-          <Menu class="sidebar__menu" ref="menu" :model="items" />
-        </div>
-      </Sidebar>
-    </aside>
-    <div class="admin-page container">
-      <NuxtChild />
-    </div>
-  </div>
+  <v-layout class="admin">
+      <v-navigation-drawer
+        id="admin__sidebar"
+        expand-on-hover
+        rail
+      >
+        <v-list>
+          <v-list-item prepend-icon="mdi-home" title="Главная страница" value="home" to="/"></v-list-item>
+        </v-list>
+
+        <v-divider></v-divider>
+
+        <v-list density="compact" nav>
+          <v-list-item prepend-icon="mdi-trending-up" title="Статистика" value="stats" to="/admin"></v-list-item>
+          <v-list-item prepend-icon="mdi-briefcase" title="Бренды" value="brands" to="/admin/brands"></v-list-item>
+          <v-list-item prepend-icon="mdi-account-group" title="Пользователи" value="users" to="/admin/users"></v-list-item>
+        </v-list>
+      </v-navigation-drawer>
+
+      <v-main class="admin__inner">
+        <nuxt-child />
+      </v-main>
+    </v-layout>
 </template>
 
-<script setup>
-import Sidebar from 'primevue/sidebar'
-import Menu from 'primevue/menu'
+<script>
 
-const items = [
-  {
-    label: 'Статистика',
-    icon: 'pi pi-chart-line',
-    to: '/admin'
-  },
-  {
-    label: 'Заказы',
-    icon: 'pi pi-money-bill',
-  },
-  {
-    label: 'Бренды',
-    icon: 'pi pi-briefcase',
-  },
-  {
-    label: 'Категории',
-    icon: 'pi pi-tags',
-    url: "https://vuejs.org/",
-  },
-  {
-    label: 'Товары',
-    icon: 'pi pi-shopping-cart',
-    to: "/fileupload",
-  },
-];
 </script>
 
 <style lang="scss" scoped>
-@import "~/assets/styles/variables";
-
-.header {
-  background-color: $dark-gray;
-  width: 100%;
-  display: inline-block;
-  padding: 15px 0;
-  position: fixed;
-  z-index: 1000;
-}
-.sidebar {
-  &__inner {
-    padding-top: 50px;
-  }
-}
-.admin-page {
-  padding-top: 80px;
-  padding-left: 300px;
+.v-main {
+  max-width: 1440px;
+	margin: 0 auto;
+	padding: 30px 15px 30px 100px !important;
 }
 </style>

@@ -198,7 +198,7 @@
         </ul>
         <div class="partners">
           <p class="partners__text">Для дилеров</p>
-          <button class="partners__btn">Стать партнером</button>
+          <button class="partners__btn btn">Стать партнером</button>
         </div>
         <ul class="pay">
           <img class="pay__img" src="~/assets/images/icons/visa.svg" alt="" />

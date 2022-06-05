@@ -81,3 +81,16 @@ body {
 	margin-top: 5px;
 	font-size: 18px;
 }
+
+.chart {
+	&__title {
+		text-align: center;
+		font-weight: 500;
+		margin-bottom: 20px;
+	}
+
+	&__bar {
+		min-height: 350px !important;
+		min-width: 350px !important;
+	}
+}

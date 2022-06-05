@@ -2,14 +2,8 @@
 	<div class="stats">
 		<h2 class="stats__title title">Статистика</h2>
 		<div class="charts">
-			<div class="chart">
-				<h3 class="chart__title">Выручка</h3>
-				<Bar class="chart__bar profit-bar" :chart-options="profitOptions" :chart-data="profitData" />
-			</div>
-			<div class="chart">
-				<h3 class="chart__title">Продано</h3>
-				<Pie class="chart__bar saled-bar" :chart-options="saledOptions" :chart-data="saledData" />
-			</div>
+			<chart-bar class="chart" title="Выручка" label="Прибыль" :labels="profitLabels" :data="profitData" />
+			<chart-pie class="chart" title="Продано" :labels="saledLabels" :dataset="saledDataset" />
 		</div>
 		<div class="saled">
 			<h2 class="saled__title">Продажи</h2>
@@ -48,35 +42,13 @@
 </template>
 
 <script setup>
-import { Bar } from 'vue-chartjs'
-import { Pie } from 'vue-chartjs'
+const profitLabels = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май']
+const profitData = [40000, 20000, 31200, 34400, 25000]
 
-import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, ArcElement, CategoryScale, LinearScale } from 'chart.js'
-
-ChartJS.register(Title, Tooltip, Legend, BarElement, ArcElement, CategoryScale, LinearScale)
-
-const profitData = {
-	labels: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май'],
-	datasets: [{ data: [40000, 20000, 31200, 34400, 25000], backgroundColor: '#f87979', label: 'Доход' }]
-}
-const profitOptions = {
-	responsive: true
-}
-
-
-const saledData = {
-	labels: ['Беговые дорожки', 'Велотренажеры', 'Прочее'],
-	datasets: [
-		{
-			backgroundColor: ['#41B883', '#E46651', '#00D8FF'],
-			data: [40, 20, 10]
-		}
-	]
-}
-
-const saledOptions = {
-	responsive: true,
-	maintainAspectRatio: false
+const saledLabels = ['Беговые дорожки', 'Велотренажеры', 'Прочее']
+const saledDataset = {
+	backgroundColor: ['#41B883', '#E46651', '#00D8FF'],
+	data: [40, 20, 10]
 }
 
 const orders = [

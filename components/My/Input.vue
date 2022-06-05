@@ -7,9 +7,9 @@
 
 <script lang="ts" setup>
 const props = defineProps<{
-	value: string,
-	placeholder: string,
-	type: string,
+	value?: string,
+	placeholder?: string,
+	type?: string,
 	disabled?: boolean,
 	success?: boolean,
 	error?: boolean,

@@ -90,7 +90,7 @@ body {
 	}
 
 	&__bar {
-		min-height: 350px !important;
-		min-width: 350px !important;
+		max-height: 350px !important;
+		max-width: 350px !important;
 	}
 }

@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import axios from 'axios'
+import { useAuthStore } from '~/store/auth';
 
 const props = defineProps({
 	show: {
@@ -23,19 +23,18 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])
 
+const authStore = useAuthStore()
 const { login } = useStrapiAuth()
-const email = ref('')
-const password = ref<String>('')
-const user = ref(null)
 
+const email = ref('')
+const password = ref('')
 
 const handlerLogin = async () => {
 	try {
 		await login({ identifier: email.value, password: password.value })
-		user.value = await useStrapiUser()
-		console.log(user);
-		console.log(user.value.value.id)
-		// emit('close')
+		const user = useStrapiUser()
+		authStore.login(user.value)
+		emit('close')
 	} catch (error) {
 		console.log(error)
 	}

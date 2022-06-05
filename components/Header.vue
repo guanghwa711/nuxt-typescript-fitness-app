@@ -16,9 +16,16 @@
             <div class="phone__callback">Заказать звонок</div>
           </div>
           <div class="auth">
-            <div class="auth__login login" @click="loginPopup = true">
-              <p class="login__text">Войти</p>
-              <img class="login__icon" src="~/assets/images/icons/user-placeholder.svg" alt="user" />
+            <div v-if="!user" class="auth__item login" @click="loginPopup = true">
+              <p class="auth__text">Войти</p>
+              <img class="auth__icon" src="~/assets/images/icons/user-placeholder.svg" alt="user" />
+            </div>
+            <div v-if="user" class="auth__item user">
+              <p class="auth__text">{{ user.username }}</p>
+              <img class="auth__icon" src="~/assets/images/icons/user-placeholder.svg" alt="user" />
+              <div class="auth__logout" @click="handleLogout">
+                <v-icon icon="mdi-exit-to-app" color="red"></v-icon>
+              </div>
             </div>
           </div>
         </div>
@@ -108,6 +115,7 @@
       </div>
     </div>
     <div class="header-for">
+      {{user}}
       <div class="container">
         <nuxt-link class="header-for__item" to="/admin">Admin</nuxt-link>
       </div>
@@ -118,12 +126,26 @@
 </template>
 
 <script lang="ts" setup>
+import { useAuthStore } from '~/store/auth';
+import { User } from '~/types/User';
+
+const { logout } = useStrapiAuth()
+
+const authStore = useAuthStore()
+
+const user = computed((): User => authStore.$state.user)
+
 const loginPopup = ref<boolean>(false)
 const registerPopup = ref<boolean>(false)
 
 function showRegisterPopup(): void {
   loginPopup.value = false
   registerPopup.value = true
+}
+
+const handleLogout = () => {
+  logout()
+  authStore.logout()
 }
 
 </script>
@@ -169,7 +191,6 @@ function showRegisterPopup(): void {
       position: relative;
       cursor: pointer;
       margin-right: 20px;
-      padding-right: 16px;
 
       &:hover {
         color: darken(#fff, 10%);
@@ -242,11 +263,16 @@ function showRegisterPopup(): void {
 }
 
 .auth {
-  .login {
+  &__item {
     display: flex;
+    align-items: center;
     gap: 14px;
     color: #fff;
     cursor: pointer;
+  }
+  &__icon {
+    width: 25px;
+    height: 25px;
   }
 }
 
@@ -345,5 +371,9 @@ function showRegisterPopup(): void {
       opacity: 1;
     }
   }
+}
+
+@media (max-width: 1250px) {
+  
 }
 </style>

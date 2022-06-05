@@ -95,29 +95,29 @@
 	</div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import useUploadFile from '~/use/useUploadFile';
 
 const { find, findOne, create, update, delete: del } = useStrapi4()
 
-const editPopup = ref(false)
-const deletePopup = ref(false)
+const editPopup = ref<boolean>(false)
+const deletePopup = ref<boolean>(false)
 
 const config = useRuntimeConfig()
-const brands = ref(await find('brands', {
+const brands = ref<any>(await find('brands', {
 	populate: '*'
 }))
 
-const searchField = ref('')
+const searchField = ref<string>('')
 const searchedBrands = computed(() => {
-	return brands.value.data.filter(brand => {
+	return brands.value.data.filter((brand: any) => {
 		return brand.attributes.title.toLowerCase().includes(searchField.value.toLowerCase())
 	})
 })
 
-const currentPage = ref(1)
-const showOnPage = 7
-const totalPages = computed(() => {
+const currentPage = ref<number>(1)
+const showOnPage: number = 7
+const totalPages = computed((): number => {
 	return Math.ceil(searchedBrands.value.length / showOnPage)
 })
 
@@ -125,22 +125,22 @@ const paginatedBrands = computed(() => {
 	return searchedBrands.value.slice((currentPage.value * showOnPage) - showOnPage, currentPage.value * showOnPage)
 })
 
-const title = ref('')
-const file = ref(null)
-const isEditing = ref(false)
-let editingID = 0
-let fileChanged = false
+const title = ref<string>('')
+const file = ref<Blob>(new Blob())
+const isEditing = ref<boolean>(false)
+let editingID: number = 0
+let fileChanged: boolean = false
 
-const onFilePicked = (event) => {
+const onFilePicked = (event: any): void => {
 	file.value = event.target.files[0]
 	if (isEditing.value) {
 		fileChanged = true
 	}
 }
 
-const filename = ref('')
-const editBrandPopup = async (id) => {
-	const brand = await findOne('brands', id, {
+const filename = ref<string>('')
+const editBrandPopup = async (id: number): Promise<void> => {
+	const brand: any = await findOne('brands', id, {
 		populate: '*'
 	})
 	title.value = brand.data.attributes.title
@@ -152,9 +152,9 @@ const editBrandPopup = async (id) => {
 	fileChanged = false
 }
 
-const addBrandPopup = () => {
+const addBrandPopup = (): void => {
 	title.value = ''
-	file.value = null
+	file.value = new Blob()
 	filename.value = ''
 	editPopup.value = true
 	isEditing.value = false
@@ -163,7 +163,7 @@ const addBrand = async () => {
 	if (isEditing.value) {
 		if (fileChanged) {
 			try {
-				const uploadFileResponse = await useUploadFile(file.value, 'brand', Date.now(), 'img')
+				const uploadFileResponse: any = await useUploadFile(file.value, 'brand', 'img')
 				await update('brands', editingID, { img: uploadFileResponse.data[0] })
 			} catch (e) {
 				console.log(e);
@@ -179,7 +179,7 @@ const addBrand = async () => {
 		return
 	}
 	try {
-		const uploadFileResponse = await useUploadFile(file.value, 'brand', Date.now(), 'img')
+		const uploadFileResponse: any = await useUploadFile(file.value, 'brand', 'img')
 		const brandData = {
 			title: title.value,
 			img: uploadFileResponse.data[0]
@@ -192,12 +192,12 @@ const addBrand = async () => {
 	}
 }
 
-const deleteID = ref()
-const deleteBrandPopup = (id) => {
+const deleteID = ref<number>()
+const deleteBrandPopup = (id: number): void => {
 	deletePopup.value = true
 	deleteID.value = id
 }
-const deleteBrand = async () => {
+const deleteBrand = async (): Promise<void> => {
 	if (brands.value.data.length - 1 <= showOnPage) {
 		currentPage.value = 1
 	}
@@ -206,7 +206,7 @@ const deleteBrand = async () => {
 	deletePopup.value = false
 }
 
-const updateBrands = async () => {
+const updateBrands = async (): Promise<void> => {
 	brands.value = await find('brands', {
 		populate: '*'
 	})

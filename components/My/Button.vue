@@ -4,17 +4,13 @@
 	</button>
 </template>
 
-<script setup>
-const props = defineProps({
-	type: {
-		type: String,
-		default: () => 'button'
-	},
-	disabled: {
-		type: Boolean,
-		default: () => false
-	}
-})
+<script lang="ts" setup>
+import { ButtonType } from '~/types/ButtonType';
+
+const props = defineProps<{
+	type?: ButtonType,
+	disabled?: Boolean | any
+}>()
 </script>
 
 <style lang="scss" scoped>

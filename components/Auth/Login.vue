@@ -25,13 +25,17 @@ const emit = defineEmits(['close'])
 
 const { login } = useStrapiAuth()
 const email = ref('')
-const password = ref('')
+const password = ref<String>('')
+const user = ref(null)
 
 
 const handlerLogin = async () => {
 	try {
 		await login({ identifier: email.value, password: password.value })
-		emit('close')
+		user.value = await useStrapiUser()
+		console.log(user);
+		console.log(user.value.value.id)
+		// emit('close')
 	} catch (error) {
 		console.log(error)
 	}

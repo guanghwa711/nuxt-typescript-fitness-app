@@ -112,17 +112,16 @@
         <nuxt-link class="header-for__item" to="/admin">Admin</nuxt-link>
       </div>
     </div>
-    <auth-login :show="loginPopup" @close="loginPopup = false" @forgot="showForgotPopup"
-      @register="showRegisterPopup" />
+    <auth-login :show="loginPopup" @close="loginPopup = false" @register="showRegisterPopup" />
     <auth-register :show="registerPopup" @close="registerPopup = false" />
   </header>
 </template>
 
-<script setup>
-const loginPopup = ref(false)
-const registerPopup = ref(false)
+<script lang="ts" setup>
+const loginPopup = ref<boolean>(false)
+const registerPopup = ref<boolean>(false)
 
-function showRegisterPopup() {
+function showRegisterPopup(): void {
   loginPopup.value = false
   registerPopup.value = true
 }

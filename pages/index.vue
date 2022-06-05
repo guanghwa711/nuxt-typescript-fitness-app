@@ -1,13 +1,11 @@
 <template>
 	<div class="home">
-    <v-icon icon="md:home"></v-icon>
+    
 	</div>
 </template>
 
-<script>
-export default {
+<script lang="ts" setup>
 
-}
 </script>
 
 <style lang="scss" scoped>

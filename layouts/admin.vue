@@ -22,7 +22,7 @@
   </v-layout>
 </template>
 
-<script>
+<script lang="ts">
 export default defineComponent({
   data() {
     return {
@@ -35,7 +35,7 @@ export default defineComponent({
     window.addEventListener('resize', () => this.handleResize)
   },
   methods: {
-    handleResize() {
+    handleResize(): void {
       if (window.innerWidth < 1300) {
         this.mobile = true
         this.drawer = false

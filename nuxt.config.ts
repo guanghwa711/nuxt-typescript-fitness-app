@@ -23,6 +23,10 @@ export default defineNuxtConfig({
 		'/assets/styles/index.scss'
 	],
 
+	typescript: {
+		strict: true
+	},
+
 	build: {
 		transpile: ['vuetify'],
 	},

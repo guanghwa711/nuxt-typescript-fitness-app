@@ -7,14 +7,14 @@
 		</div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 const emit = defineEmits(['add', 'update:searchField'])
 
-const field = ref('')
-const add = () => {
+const field = ref<string>('')
+const add = (): void => {
 	emit('add')
 }
-watch(field, (value) => {
+watch(field, (value): void => {
 	emit('update:searchField', value)
 })
 </script>

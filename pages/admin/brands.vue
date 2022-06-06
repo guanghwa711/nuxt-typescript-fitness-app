@@ -18,7 +18,7 @@
 					<td>
 						<div class="table__item">
 							<img class="brand__logo" :src="`${config.API_URL}${brand.attributes.img.data.attributes.url}`" alt="">{{
-							brand.attributes.title
+									brand.attributes.title
 							}}
 						</div>
 					</td>
@@ -66,7 +66,7 @@
 						<v-btn color="red" text @click="editPopup = false">
 							Назад
 						</v-btn>
-						<v-btn color="green" type="submit">
+						<v-btn color="green" :disabled="adding" type="submit">
 							{{ isEditing ? 'Изменить' : 'Добавить' }}
 						</v-btn>
 					</v-card-actions>
@@ -86,7 +86,7 @@
 					<v-btn color="green" text @click="deletePopup = false">
 						Назад
 					</v-btn>
-					<v-btn color="red" text @click="deleteBrand">
+					<v-btn color="red" :disabled="deleting" text @click="deleteBrand">
 						Удалить
 					</v-btn>
 				</v-card-actions>
@@ -132,6 +132,7 @@ const form = reactive({
 	file: new Blob()
 })
 
+const adding = ref<boolean>(false)
 const isEditing = ref<boolean>(false)
 let editingID: number = 0
 let fileChanged: boolean = false
@@ -165,24 +166,29 @@ const addBrandPopup = (): void => {
 	isEditing.value = false
 }
 const addBrand = async () => {
+	adding.value = true
 	if (isEditing.value) {
 		if (fileChanged) {
 			try {
 				const uploadFileResponse: any = await useUploadFile(form.file, 'brand', 'img')
 				await update('brands', editingID, { img: uploadFileResponse.data[0] })
-			} catch (res: any) {
-				toast.error(res.error.message)
+			} catch (error: any) {
+				toast.error(error.message)
 			}
 		}
 		try {
 			await update('brands', editingID, { title: form.title })
 			toast.success('Вы отредактировали бренд.')
-		} catch (res: any) {
-			toast.error(res.error.message)
+		} catch (error: any) {
+			toast.error(error.message)
 		}
 		updateBrands()
 		editPopup.value = false
-		return
+		return adding.value = false
+	}
+	if (!form.title || form.file.size === 0) {
+		adding.value = false
+		return toast.error('Заполните все поля!')
 	}
 	try {
 		const uploadFileResponse: any = await useUploadFile(form.file, 'brand', 'img')
@@ -197,14 +203,17 @@ const addBrand = async () => {
 		toast.error(res.error.message)
 	}
 	updateBrands()
+	adding.value = false
 }
 
+const deleting = ref<boolean>(false)
 let deleteID: number
 const deleteBrandPopup = (id: number): void => {
 	deletePopup.value = true
 	deleteID = id
 }
 const deleteBrand = async (): Promise<void> => {
+	deleting.value = true
 	if (brands.value.data.length - 1 <= showOnPage) {
 		currentPage.value = 1
 	}
@@ -212,11 +221,17 @@ const deleteBrand = async (): Promise<void> => {
 		populate: '*',
 	})
 	const fileID: number = brand.data.attributes.img.data.id
-	
-	await del('brands', deleteID)
-	await del('upload/files', fileID)
+
+	try {
+		await del('brands', deleteID)
+		await del('upload/files', fileID)
+		toast.success('Вы удалили бренд!')
+	} catch (error: any) {
+		toast.error(error.message)
+	}
 	updateBrands()
 	deletePopup.value = false
+	deleting.value = false
 }
 
 const updateBrands = async (): Promise<void> => {

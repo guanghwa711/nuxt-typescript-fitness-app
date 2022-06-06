@@ -1,7 +1,7 @@
 <template>
 			<div class="toolbar">
 			<v-text-field class="toolbar__field" v-model="field" label="Поиск"></v-text-field>
-			<v-btn class="toolbar__add" color="success" @click="add">добавить
+			<v-btn v-if="!addHidden" class="toolbar__add" color="success" @click="add">добавить
 				<v-icon>mdi-plus</v-icon>
 			</v-btn>
 		</div>
@@ -9,6 +9,10 @@
 
 <script lang="ts" setup>
 const emit = defineEmits(['add', 'update:searchField'])
+
+const props = defineProps<{
+	addHidden?: boolean
+}>()
 
 const field = ref<string>('')
 const add = (): void => {

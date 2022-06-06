@@ -11,17 +11,14 @@
 	</my-popup>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { useAuthStore } from '~/store/auth';
 import { useToast } from 'vue-toastification'
 
-const props = defineProps({
-	show: {
-		type: Boolean,
-		default: () => false
-	},
-})
-const emit = defineEmits(['close'])
+const props = defineProps<{
+	show: boolean
+}>()
+const emit = defineEmits(['close', 'register'])
 
 const authStore = useAuthStore()
 const { login } = useStrapiAuth()
@@ -42,7 +39,7 @@ const handlerLogin = async () => {
 		authStore.login(user.value)
 		toast.success('Вы успешно вошли в аккаунт!')
 		emit('close')
-	} catch (res) {
+	} catch (res: any) {
 		toast.error(res.error.message)
 	}
 	loading.value = false

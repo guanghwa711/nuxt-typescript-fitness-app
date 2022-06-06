@@ -9,8 +9,9 @@
       <v-divider></v-divider>
 
       <v-list density="compact" nav>
-        <v-list-item prepend-icon="mdi-trending-up" title="Статистика" value="stats" to="/admin"></v-list-item>
+        <v-list-item prepend-icon="mdi-trending-up" title="Статистика" value="stats" to="/admin/stats"></v-list-item>
         <v-list-item prepend-icon="mdi-briefcase" title="Бренды" value="brands" to="/admin/brands"></v-list-item>
+        <v-list-item prepend-icon="mdi-dumbbell" title="Тренажеры" value="product" to="/admin/products"></v-list-item>
         <v-list-item prepend-icon="mdi-account-group" title="Пользователи" value="users" to="/admin/users">
         </v-list-item>
       </v-list>

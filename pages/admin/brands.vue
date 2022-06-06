@@ -213,6 +213,7 @@ const deleteBrand = async (): Promise<void> => {
 	})
 	const fileID: number = brand.data.attributes.img.data.id
 	
+<<<<<<< HEAD
 	try {
 		await del('brands', deleteID)
 		await del('upload/files', fileID)
@@ -220,6 +221,10 @@ const deleteBrand = async (): Promise<void> => {
 	} catch(res: any) {
 		toast.error(res.error.message)
 	}
+=======
+	await del('brands', deleteID)
+	await del('upload/files', fileID)
+>>>>>>> afb8514afd7994e6e7728d5c1d696f5785e605f3
 	updateBrands()
 	deletePopup.value = false
 }

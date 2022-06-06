@@ -51,7 +51,7 @@
 
 			<v-card>
 				<v-card-title class="text-h5 grey lighten-2">
-					Добавить бренд
+					{{ isEditing ? 'Изменить' : 'Добавить' }} бренд
 				</v-card-title>
 
 				<v-divider></v-divider>

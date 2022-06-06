@@ -159,7 +159,7 @@
     </div>
     <div class="header-for">
       <div class="container">
-        <nuxt-link class="header-for__item" to="/admin">Admin</nuxt-link>
+        <nuxt-link class="header-for__item" to="/admin/stats">Admin</nuxt-link>
       </div>
     </div>
     <auth-login :show="loginPopup" @close="loginPopup = false" @register="showRegisterPopup" />

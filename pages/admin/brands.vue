@@ -58,7 +58,7 @@
 				<v-form class="edit__form" @submit.prevent="addBrand">
 					<v-file-input class="edit__input" accept="image/*" :label="filename || 'Лого'" name="img"
 						@change="onFilePicked" />
-					<v-text-field class="edit__input" v-model="title" name="title" label="Название">
+					<v-text-field class="edit__input" v-model="form.title" name="title" label="Название">
 					</v-text-field>
 					<v-divider></v-divider>
 					<v-card-actions>
@@ -97,8 +97,10 @@
 
 <script lang="ts" setup>
 import useUploadFile from '~/use/useUploadFile';
+import { useToast } from 'vue-toastification'
 
 const { find, findOne, create, update, delete: del } = useStrapi4()
+const toast = useToast()
 
 const editPopup = ref<boolean>(false)
 const deletePopup = ref<boolean>(false)
@@ -125,14 +127,17 @@ const paginatedBrands = computed(() => {
 	return searchedBrands.value.slice((currentPage.value * showOnPage) - showOnPage, currentPage.value * showOnPage)
 })
 
-const title = ref<string>('')
-const file = ref<Blob>(new Blob())
+const form = reactive({
+	title: '',
+	file: new Blob()
+})
+
 const isEditing = ref<boolean>(false)
 let editingID: number = 0
 let fileChanged: boolean = false
 
 const onFilePicked = (event: any): void => {
-	file.value = event.target.files[0]
+	form.file = event.target.files[0]
 	if (isEditing.value) {
 		fileChanged = true
 	}
@@ -143,8 +148,8 @@ const editBrandPopup = async (id: number): Promise<void> => {
 	const brand: any = await findOne('brands', id, {
 		populate: '*'
 	})
-	title.value = brand.data.attributes.title
-	file.value = brand.data.attributes.img.data
+	form.title = brand.data.attributes.title
+	form.file = brand.data.attributes.img.data
 	filename.value = brand.data.attributes.img.data.attributes.name
 	editPopup.value = true
 	isEditing.value = true
@@ -153,8 +158,8 @@ const editBrandPopup = async (id: number): Promise<void> => {
 }
 
 const addBrandPopup = (): void => {
-	title.value = ''
-	file.value = new Blob()
+	form.title = ''
+	form.file = new Blob()
 	filename.value = ''
 	editPopup.value = true
 	isEditing.value = false
@@ -163,45 +168,58 @@ const addBrand = async () => {
 	if (isEditing.value) {
 		if (fileChanged) {
 			try {
-				const uploadFileResponse: any = await useUploadFile(file.value, 'brand', 'img')
+				const uploadFileResponse: any = await useUploadFile(form.file, 'brand', 'img')
 				await update('brands', editingID, { img: uploadFileResponse.data[0] })
-			} catch (e) {
-				console.log(e);
+			} catch (res: any) {
+				toast.error(res.error.message)
 			}
 		}
 		try {
-			await update('brands', editingID, { title: title.value })
-		} catch (e) {
-			console.log(e);
+			await update('brands', editingID, { title: form.title })
+			toast.success('Вы отредактировали бренд.')
+		} catch (res: any) {
+			toast.error(res.error.message)
 		}
 		updateBrands()
 		editPopup.value = false
 		return
 	}
 	try {
-		const uploadFileResponse: any = await useUploadFile(file.value, 'brand', 'img')
+		const uploadFileResponse: any = await useUploadFile(form.file, 'brand', 'img')
 		const brandData = {
-			title: title.value,
+			title: form.title,
 			img: uploadFileResponse.data[0]
 		}
 		await create('brands', brandData)
-		updateBrands()
 		editPopup.value = false
-	} catch (e) {
-		console.log(e);
+		toast.success('Вы создали бренд.')
+	} catch (res: any) {
+		toast.error(res.error.message)
 	}
+	updateBrands()
 }
 
-const deleteID = ref<number>()
+let deleteID: number
 const deleteBrandPopup = (id: number): void => {
 	deletePopup.value = true
-	deleteID.value = id
+	deleteID = id
 }
 const deleteBrand = async (): Promise<void> => {
 	if (brands.value.data.length - 1 <= showOnPage) {
 		currentPage.value = 1
 	}
-	await del('brands', deleteID.value)
+	const brand: any = await findOne('brands', deleteID, {
+		populate: '*',
+	})
+	const fileID: number = brand.data.attributes.img.data.id
+	
+	try {
+		await del('brands', deleteID)
+		await del('upload/files', fileID)
+		toast.success('Вы удалили бренд.')
+	} catch(res: any) {
+		toast.error(res.error.message)
+	}
 	updateBrands()
 	deletePopup.value = false
 }

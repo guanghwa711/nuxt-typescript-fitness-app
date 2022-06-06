@@ -2,10 +2,10 @@
 	<my-popup v-if="show" @close="$emit('close')">
 		<form class="login" @submit.prevent="handlerLogin">
 			<h2 class="login__title">Вход в личный кабинет</h2>
-			<my-input class="login__field" name="email" placeholder="Ваша почта" @update:field="field => email = field" />
+			<my-input class="login__field" name="email" placeholder="Ваша почта" @update:field="field => form.email = field" />
 			<my-input class="login__field" name="password" type="password" placeholder="Пароль"
-				@update:field="field => password = field" />
-			<my-button type="submit">Войти</my-button>
+				@update:field="field => form.password = field" />
+			<my-button type="submit" :disabled="loading">Войти</my-button>
 			<p class="login__register" @click="$emit('register')">Зарегистрироваться</p>
 		</form>
 	</my-popup>
@@ -13,6 +13,7 @@
 
 <script setup>
 import { useAuthStore } from '~/store/auth';
+import { useToast } from 'vue-toastification'
 
 const props = defineProps({
 	show: {
@@ -20,25 +21,37 @@ const props = defineProps({
 		default: () => false
 	},
 })
-
 const emit = defineEmits(['close'])
 
 const authStore = useAuthStore()
 const { login } = useStrapiAuth()
 
-const email = ref('')
-const password = ref('')
+const toast = useToast()
+
+const form = reactive({
+	email: '',
+	password: ''
+})
+const loading = ref<boolean>(false)
 
 const handlerLogin = async () => {
 	try {
-		await login({ identifier: email.value, password: password.value })
+		loading.value = true
+		await login({ identifier: form.email, password: form.password })
 		const user = useStrapiUser()
 		authStore.login(user.value)
+		toast.success('Вы успешно вошли в аккаунт!')
 		emit('close')
-	} catch (error) {
-		console.log(error)
+	} catch (res) {
+		toast.error(res.error.message)
 	}
+	loading.value = false
 }
+
+watch(() => props.show, () => {
+	form.email = ''
+	form.password = ''
+})
 </script>
 
 <style lang="scss" scoped>

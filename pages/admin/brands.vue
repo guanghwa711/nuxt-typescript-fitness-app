@@ -36,7 +36,7 @@
 			</tbody>
 		</v-table>
 		<div v-if="paginatedBrands.length < 1" class="not-found">Не найдено</div>
-		<div v-if="totalPages > 1" class="paginationr">
+		<div v-if="totalPages > 1" class="pagination">
 			<v-container>
 				<v-row justify="center">
 					<v-col cols="8">

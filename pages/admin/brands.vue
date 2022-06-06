@@ -192,16 +192,22 @@ const addBrand = async () => {
 	}
 }
 
-const deleteID = ref<number>()
+let deleteID: number
 const deleteBrandPopup = (id: number): void => {
 	deletePopup.value = true
-	deleteID.value = id
+	deleteID = id
 }
 const deleteBrand = async (): Promise<void> => {
 	if (brands.value.data.length - 1 <= showOnPage) {
 		currentPage.value = 1
 	}
-	await del('brands', deleteID.value)
+	const brand: any = await findOne('brands', deleteID, {
+		populate: '*',
+	})
+	const fileID: number = brand.data.attributes.img.data.id
+	
+	await del('brands', deleteID)
+	await del('upload/files', fileID)
 	updateBrands()
 	deletePopup.value = false
 }

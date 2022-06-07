@@ -55,7 +55,7 @@
 				</v-card-title>
 
 				<v-divider></v-divider>
-				<v-form class="edit__form" @submit.prevent="addBrand">
+				<v-form class="admin-form" @submit.prevent="addBrand">
 					<v-file-input class="edit__input" accept="image/*" :label="filename || 'Лого'" name="img"
 						@change="onFilePicked" />
 					<v-text-field class="edit__input" v-model="form.title" name="title" label="Название">
@@ -253,9 +253,6 @@ const updateBrands = async (): Promise<void> => {
 }
 
 .edit {
-	&__form {
-		padding: 10px 30px;
-	}
 
 	&__input {
 		width: 250px;

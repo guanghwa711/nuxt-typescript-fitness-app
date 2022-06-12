@@ -47,8 +47,7 @@
 				</v-row>
 			</v-container>
 		</div>
-		<v-dialog class="edit" v-model="editPopup" width="500">
-
+		<v-dialog class="edit" v-model="editPopup">
 			<v-card>
 				<v-card-title class="text-h5 grey lighten-2">
 					{{ isEditing ? 'Изменить' : 'Добавить' }} бренд
@@ -60,6 +59,7 @@
 						@change="onFilePicked" />
 					<v-text-field class="edit__input" v-model="form.title" name="title" label="Название">
 					</v-text-field>
+					<admin-add-content class="edit__content" @change="content => form.content = content" :contentFromServer="form.content"/>
 					<v-divider></v-divider>
 					<v-card-actions>
 						<v-spacer></v-spacer>
@@ -74,7 +74,7 @@
 
 			</v-card>
 		</v-dialog>
-		<v-dialog v-model="deletePopup" width="500">
+		<v-dialog v-model="deletePopup">
 			<v-card>
 
 				<v-card-text>
@@ -129,7 +129,8 @@ const paginatedBrands = computed(() => {
 
 const form = reactive({
 	title: '',
-	file: new Blob()
+	file: new Blob(),
+	content: {}
 })
 
 const adding = ref<boolean>(false)
@@ -151,6 +152,8 @@ const editBrandPopup = async (id: number): Promise<void> => {
 	})
 	form.title = brand.data.attributes.title
 	form.file = brand.data.attributes.img.data
+	form.content = brand.data.attributes.content
+	console.log(brand.data.attributes);
 	filename.value = brand.data.attributes.img.data.attributes.name
 	editPopup.value = true
 	isEditing.value = true
@@ -159,9 +162,9 @@ const editBrandPopup = async (id: number): Promise<void> => {
 }
 
 const addBrandPopup = (): void => {
-	form.title = ''
+	form.title = filename.value = ''
 	form.file = new Blob()
-	filename.value = ''
+	form.content = {}
 	editPopup.value = true
 	isEditing.value = false
 }
@@ -177,7 +180,7 @@ const addBrand = async () => {
 			}
 		}
 		try {
-			await update('brands', editingID, { title: form.title })
+			await update('brands', editingID, { title: form.title, content: form.content })
 			toast.success('Вы отредактировали бренд.')
 		} catch (error: any) {
 			toast.error(error.message)
@@ -186,7 +189,7 @@ const addBrand = async () => {
 		editPopup.value = false
 		return adding.value = false
 	}
-	if (!form.title || form.file.size === 0) {
+	if (!form.title || !form.content || form.file.size === 0) {
 		adding.value = false
 		return toast.error('Заполните все поля!')
 	}
@@ -194,7 +197,8 @@ const addBrand = async () => {
 		const uploadFileResponse: any = await useUploadFile(form.file, 'brand', 'img')
 		const brandData = {
 			title: form.title,
-			img: uploadFileResponse.data[0]
+			img: uploadFileResponse.data[0],
+			content: form.content
 		}
 		await create('brands', brandData)
 		editPopup.value = false
@@ -256,6 +260,9 @@ const updateBrands = async (): Promise<void> => {
 
 	&__input {
 		width: 250px;
+	}
+	&__content {
+		margin-bottom: 20px;
 	}
 }
 </style>

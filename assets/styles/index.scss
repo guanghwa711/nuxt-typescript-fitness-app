@@ -68,7 +68,7 @@ body {
 }
 
 .admin-form {
-	padding: 10px 30px;
+	padding: 10px 50px;
 	width: 500px;
 }
 
@@ -98,4 +98,12 @@ body {
 		max-height: 350px !important;
 		max-width: 350px !important;
 	}
+}
+
+.v-input {
+	margin-bottom: 20px;
+}
+
+.v-input__details {
+	display: none !important;
 }

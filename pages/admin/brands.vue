@@ -153,7 +153,6 @@ const editBrandPopup = async (id: number): Promise<void> => {
 	form.title = brand.data.attributes.title
 	form.file = brand.data.attributes.img.data
 	form.content = brand.data.attributes.content
-	console.log(brand.data.attributes);
 	filename.value = brand.data.attributes.img.data.attributes.name
 	editPopup.value = true
 	isEditing.value = true

@@ -93,7 +93,7 @@
           <nav class="menu">
             <ul class="menu__list">
               <li class="menu__item">
-                <nuxt-link class="menu__link" to="/">Бренды</nuxt-link>
+                <nuxt-link class="menu__link" to="/brands">Бренды</nuxt-link>
               </li>
               <li class="menu__item">
                 <nuxt-link class="menu__link" to="/">Сервис</nuxt-link>
@@ -167,22 +167,21 @@
   </header>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import { useAuthStore } from '~/store/auth';
-import { User } from '~/types/User';
 
 const { logout } = useStrapiAuth()
 
 const authStore = useAuthStore()
 
-const user = computed((): User => authStore.$state.user)
+const user = computed(() => authStore.$state.user)
 
-const loginPopup = ref<boolean>(false)
-const registerPopup = ref<boolean>(false)
+const loginPopup = ref(false)
+const registerPopup = ref(false)
 
-const isBurgerActive = ref<boolean>(false)
+const isBurgerActive = ref(false)
 
-function showRegisterPopup(): void {
+function showRegisterPopup() {
   loginPopup.value = false
   registerPopup.value = true
 }

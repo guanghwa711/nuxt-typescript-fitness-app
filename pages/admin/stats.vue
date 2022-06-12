@@ -41,11 +41,11 @@
 	</div>
 </template>
 
-<script lang="ts" setup>
-const profitLabels: string[] = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май']
-const profitData: number[] = [40000, 20000, 31200, 34400, 25000]
+<script setup>
+const profitLabels = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май']
+const profitData = [40000, 20000, 31200, 34400, 25000]
 
-const saledLabels: string[] = ['Беговые дорожки', 'Велотренажеры', 'Прочее']
+const saledLabels = ['Беговые дорожки', 'Велотренажеры', 'Прочее']
 const saledDataset = {
 	backgroundColor: ['#41B883', '#E46651', '#00D8FF'],
 	data: [40, 20, 10]

@@ -7,18 +7,16 @@
 		</div>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 const emit = defineEmits(['add', 'update:searchField'])
 
-const props = defineProps<{
-	addHidden?: boolean
-}>()
+const props = defineProps(['addHidden'])
 
-const field = ref<string>('')
-const add = (): void => {
+const field = ref('')
+const add = () => {
 	emit('add')
 }
-watch(field, (value): void => {
+watch(field, (value) => {
 	emit('update:searchField', value)
 })
 </script>

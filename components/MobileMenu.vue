@@ -22,7 +22,7 @@
 		</nuxt-link>
 		<ul class="menu">
 			<li class="menu__item">
-				<nuxt-link class="menu__link" to="/">Бренды</nuxt-link>
+				<nuxt-link class="menu__link" to="/brands">Бренды</nuxt-link>
 			</li>
 			<li class="menu__item">
 				<nuxt-link class="menu__link" to="/">Сервис</nuxt-link>
@@ -53,13 +53,8 @@
 	</div>
 </template>
 
-<script lang="ts" setup>
-import { User } from '~/types/User';
-
-const props = defineProps<{
-	show: Boolean,
-	user: User
-}>()
+<script setup>
+const props = defineProps(['show', 'user'])
 </script>
 
 <style lang="scss" scoped>

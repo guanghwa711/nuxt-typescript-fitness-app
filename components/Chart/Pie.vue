@@ -5,17 +5,13 @@
 	</div>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import { Pie } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale } from 'chart.js'
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale, LinearScale)
 
-const props = defineProps<{
-	title: string,
-	labels: string[],
-	dataset: any
-}>()
+const props = defineProps(['title', 'labels', 'dataset'])
 
 const chartData = {
 	labels: props.labels,

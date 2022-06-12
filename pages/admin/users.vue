@@ -116,31 +116,31 @@
 	</div>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import useUploadFile from '~/use/useUploadFile';
 
 const { find, findOne, update, delete: del } = useStrapi4()
 
-const editPopup = ref<boolean>(false)
-const deletePopup = ref<boolean>(false)
+const editPopup = ref(false)
+const deletePopup = ref(false)
 
 const config = useRuntimeConfig()
-const users = ref<any>(await find('users', {
+const users = ref(await find('users', {
 	populate: '*'
 }))
 
 console.log(users.value);
 
-const searchField = ref<string>('')
+const searchField = ref('')
 const searchedUsers = computed(() => {
-	return users.value.filter((user: any) => {
+	return users.value.filter((user) => {
 		return user.username.toLowerCase().includes(searchField.value.toLowerCase())
 	})
 })
 
-const currentPage = ref<number>(1)
-const showOnPage: number = 7
-const totalPages = computed((): number => {
+const currentPage = ref(1)
+const showOnPage = 7
+const totalPages = computed(() => {
 	return Math.ceil(searchedUsers.value.length / showOnPage)
 })
 
@@ -148,21 +148,21 @@ const paginatedUsers = computed(() => {
 	return searchedUsers.value.slice((currentPage.value * showOnPage) - showOnPage, currentPage.value * showOnPage)
 })
 
-const username = ref<string>()
-const email = ref<string>()
-const phone = ref<number>()
-const file = ref<Blob>(new Blob())
-let editingID: number = 0
-let fileChanged: boolean = false
+const username = ref()
+const email = ref()
+const phone = ref()
+const file = ref(new Blob())
+let editingID = 0
+let fileChanged = false
 
-const onFilePicked = (event: any): void => {
+const onFilePicked = (event) => {
 	file.value = event.target.files[0]
 	fileChanged = true
 }
 
-const filename = ref<string>('')
-const editUserPopup = async (id: number): Promise<void> => {
-	const user: any = await findOne('users', id, {
+const filename = ref('')
+const editUserPopup = async (id) => {
+	const user = await findOne('users', id, {
 		populate: '*'
 	})
 	username.value = user.username
@@ -178,7 +178,7 @@ const editUserPopup = async (id: number): Promise<void> => {
 const editUser = async () => {
 	if (fileChanged) {
 		try {
-			const uploadFileResponse: any = await useUploadFile(file.value, 'user', 'img')
+			const uploadFileResponse = await useUploadFile(file.value, 'user', 'img')
 			await update('users', editingID, { img: uploadFileResponse.data[0] })
 		} catch (e) {
 			console.log(e);
@@ -196,20 +196,20 @@ const editUser = async () => {
 	editPopup.value = false
 }
 
-let deleteID: number
-const deleteUserPopup = (id: number): void => {
+let deleteID
+const deleteUserPopup = (id) => {
 	deletePopup.value = true
 	deleteID = id
 }
-const deleteUser = async (): Promise<void> => {
+const deleteUser = async () => {
 	if (users.value.data.length - 1 <= showOnPage) {
 		currentPage.value = 1
 	}
 	if(filename.value) {
-		const user: any = await findOne('users', deleteID, {
+		const user = await findOne('users', deleteID, {
 			populate: '*',
 		})
-		const fileID: number = user.avatar.id
+		const fileID = user.avatar.id
 		await del('upload/files', fileID)
 	}
 
@@ -218,7 +218,7 @@ const deleteUser = async (): Promise<void> => {
 	deletePopup.value = false
 }
 
-const updateUsers = async (): Promise<void> => {
+const updateUsers = async () => {
 	users.value = await find('users', {
 		populate: '*'
 	})

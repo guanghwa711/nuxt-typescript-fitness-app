@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export default async function useUploadFile(file: Blob, ref: string, field: string): Promise<Object> {
+export default async function useUploadFile(file, ref, field) {
 	const config = useRuntimeConfig()
 
 	const brandImg = new FormData()

@@ -5,24 +5,18 @@
 	</div>
 </template>
 
-<script lang="ts" setup>
-const props = defineProps<{
-	value?: string,
-	placeholder?: string,
-	type?: string,
-	disabled?: boolean,
-	success?: boolean,
-	error?: boolean,
-}>()
+<script setup>
+const props = defineProps(['value', 'placeholder', 'type', 'disabled', 'success', 'error'])
+
 const emit = defineEmits(['update:field', 'blur'])
 
 const field = ref('')
 
-watch(field, (): void => {
+watch(field, () => {
 	emit('update:field', field.value)
 })
 
-onMounted((): void => {
+onMounted(() => {
 	if (props.value) {
 		field.value = props.value
 	}

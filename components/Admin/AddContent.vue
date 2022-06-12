@@ -78,16 +78,14 @@
 	</div>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import useUploadFile from '~/use/useUploadFile';
 
 const emit = defineEmits(['change'])
-const props = defineProps<{
-	contentFromServer?: string
-}>()
+const props = defineProps(['contentFromServer'])
 
 const config = useRuntimeConfig()
-let content: any = reactive([])
+let content = reactive([])
 
 watch(content, () => {
 	emit('change', JSON.stringify({ ...content }))
@@ -100,8 +98,8 @@ if(props.contentFromServer) {
 	})
 }
 
-const onFilePicked = async (event: any, id: number) => {
-	const res: any = await useUploadFile(event.target.files[0], 'content', 'img')
+const onFilePicked = async (event, id) => {
+	const res = await useUploadFile(event.target.files[0], 'content', 'img')
 	console.log(res);
 	content[id].data.img = {
 		id: res.data[0].id,
@@ -109,7 +107,7 @@ const onFilePicked = async (event: any, id: number) => {
 	}
 }
 
-const deleteContentItem = (index: number) => {
+const deleteContentItem = (index) => {
 	content.splice(index, 1)
 }
 </script>

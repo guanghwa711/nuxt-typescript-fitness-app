@@ -7,7 +7,7 @@ export const useAuthStore = defineStore('auth', {
 		}
 	},
 	actions: {
-		login(user: any) {
+		login(user) {
 			this.user = user
 		},
 		logout() {

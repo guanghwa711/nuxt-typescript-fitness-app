@@ -11,13 +11,11 @@
 	</my-popup>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import { useAuthStore } from '~/store/auth';
 import { useToast } from 'vue-toastification'
 
-const props = defineProps<{
-	show: boolean
-}>()
+const props = defineProps(['show'])
 const emit = defineEmits(['close', 'register'])
 
 const authStore = useAuthStore()
@@ -29,7 +27,7 @@ const form = reactive({
 	email: '',
 	password: ''
 })
-const loading = ref<boolean>(false)
+const loading = ref(false)
 
 const handlerLogin = async () => {
 	try {
@@ -39,7 +37,7 @@ const handlerLogin = async () => {
 		authStore.login(user.value)
 		toast.success('Вы успешно вошли в аккаунт!')
 		emit('close')
-	} catch (res: any) {
+	} catch (res) {
 		toast.error(res.error.message)
 	}
 	loading.value = false

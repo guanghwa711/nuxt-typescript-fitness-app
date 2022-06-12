@@ -30,15 +30,13 @@
 	</my-popup>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import useVuelidate from '@vuelidate/core'
 import { required, email, minLength, sameAs } from '@vuelidate/validators'
 import { useAuthStore } from '~/store/auth';
 import { useToast } from 'vue-toastification'
 
-const props = defineProps<{
-	show: boolean
-}>()
+const props = defineProps(['show'])
 
 const emit = defineEmits(['close'])
 
@@ -73,7 +71,7 @@ const handlerRegister = async () => {
 		const user = useStrapiUser()
 		authStore.login(user.value)
 		emit('close')
-	} catch (res: any) {
+	} catch (res) {
 		toast.error(res.error.message)
 	}
 	loading.value = false

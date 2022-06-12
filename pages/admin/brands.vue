@@ -95,31 +95,31 @@
 	</div>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import useUploadFile from '~/use/useUploadFile';
 import { useToast } from 'vue-toastification'
 
 const { find, findOne, create, update, delete: del } = useStrapi4()
 const toast = useToast()
 
-const editPopup = ref<boolean>(false)
-const deletePopup = ref<boolean>(false)
+const editPopup = ref(false)
+const deletePopup = ref(false)
 
 const config = useRuntimeConfig()
-const brands = ref<any>(await find('brands', {
+const brands = ref(await find('brands', {
 	populate: '*'
 }))
 
-const searchField = ref<string>('')
+const searchField = ref('')
 const searchedBrands = computed(() => {
-	return brands.value.data.filter((brand: any) => {
+	return brands.value.data.filter((brand) => {
 		return brand.attributes.title.toLowerCase().includes(searchField.value.toLowerCase())
 	})
 })
 
-const currentPage = ref<number>(1)
-const showOnPage: number = 7
-const totalPages = computed((): number => {
+const currentPage = ref(1)
+const showOnPage = 7
+const totalPages = computed(() => {
 	return Math.ceil(searchedBrands.value.length / showOnPage)
 })
 
@@ -135,10 +135,10 @@ const form = reactive({
 
 const adding = ref<boolean>(false)
 const isEditing = ref<boolean>(false)
-let editingID: number = 0
-let fileChanged: boolean = false
+let editingID = 0
+let fileChanged = false
 
-const onFilePicked = (event: any): void => {
+const onFilePicked = (event) => {
 	form.file = event.target.files[0]
 	if (isEditing.value) {
 		fileChanged = true
@@ -146,8 +146,8 @@ const onFilePicked = (event: any): void => {
 }
 
 const filename = ref<string>('')
-const editBrandPopup = async (id: number): Promise<void> => {
-	const brand: any = await findOne('brands', id, {
+const editBrandPopup = async (id) => {
+	const brand = await findOne('brands', id, {
 		populate: '*'
 	})
 	form.title = brand.data.attributes.title
@@ -160,7 +160,7 @@ const editBrandPopup = async (id: number): Promise<void> => {
 	fileChanged = false
 }
 
-const addBrandPopup = (): void => {
+const addBrandPopup = () => {
 	form.title = filename.value = ''
 	form.file = new Blob()
 	form.content = {}
@@ -172,16 +172,16 @@ const addBrand = async () => {
 	if (isEditing.value) {
 		if (fileChanged) {
 			try {
-				const uploadFileResponse: any = await useUploadFile(form.file, 'brand', 'img')
+				const uploadFileResponse = await useUploadFile(form.file, 'brand', 'img')
 				await update('brands', editingID, { img: uploadFileResponse.data[0] })
-			} catch (error: any) {
+			} catch (error) {
 				toast.error(error.message)
 			}
 		}
 		try {
 			await update('brands', editingID, { title: form.title, content: form.content })
 			toast.success('Вы отредактировали бренд.')
-		} catch (error: any) {
+		} catch (error) {
 			toast.error(error.message)
 		}
 		updateBrands()
@@ -193,7 +193,7 @@ const addBrand = async () => {
 		return toast.error('Заполните все поля!')
 	}
 	try {
-		const uploadFileResponse: any = await useUploadFile(form.file, 'brand', 'img')
+		const uploadFileResponse = await useUploadFile(form.file, 'brand', 'img')
 		const brandData = {
 			title: form.title,
 			img: uploadFileResponse.data[0],
@@ -202,7 +202,7 @@ const addBrand = async () => {
 		await create('brands', brandData)
 		editPopup.value = false
 		toast.success('Вы создали бренд.')
-	} catch (res: any) {
+	} catch (res) {
 		toast.error(res.error.message)
 	}
 	updateBrands()
@@ -210,26 +210,26 @@ const addBrand = async () => {
 }
 
 const deleting = ref<boolean>(false)
-let deleteID: number
-const deleteBrandPopup = (id: number): void => {
+let deleteID
+const deleteBrandPopup = (id) => {
 	deletePopup.value = true
 	deleteID = id
 }
-const deleteBrand = async (): Promise<void> => {
+const deleteBrand = async () => {
 	deleting.value = true
 	if (brands.value.data.length - 1 <= showOnPage) {
 		currentPage.value = 1
 	}
-	const brand: any = await findOne('brands', deleteID, {
+	const brand = await findOne('brands', deleteID, {
 		populate: '*',
 	})
-	const fileID: number = brand.data.attributes.img.data.id
+	const fileID = brand.data.attributes.img.data.id
 
 	try {
 		await del('brands', deleteID)
 		await del('upload/files', fileID)
 		toast.success('Вы удалили бренд!')
-	} catch (error: any) {
+	} catch (error) {
 		toast.error(error.message)
 	}
 	updateBrands()
@@ -237,7 +237,7 @@ const deleteBrand = async (): Promise<void> => {
 	deleting.value = false
 }
 
-const updateBrands = async (): Promise<void> => {
+const updateBrands = async () => {
 	brands.value = await find('brands', {
 		populate: '*'
 	})

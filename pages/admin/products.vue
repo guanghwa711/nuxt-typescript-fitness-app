@@ -23,9 +23,8 @@
 				<tr v-for="product in paginatedProducts" :key="product.id" class="product">
 					<td>
 						<div class="table__item">
-							<!-- <img class="product__img" :src="`${config.API_URL}${product.attributes.img.data.attributes.url}`" alt="">{{
-							product.attributes.title
-							}} -->
+							<img class="product__img" :src="`${config.API_URL}${product.attributes.gallery.data[0].attributes.url}`"
+								alt="">
 							{{ product.attributes.title }}
 						</div>
 					</td>
@@ -65,7 +64,7 @@
 				</v-row>
 			</v-container>
 		</div>
-		<v-dialog class="edit" v-model="editPopup" width="500">
+		<v-dialog class="edit" v-model="editPopup">
 
 			<v-card>
 				<v-card-title class="text-h5 grey lighten-2">
@@ -73,10 +72,32 @@
 				</v-card-title>
 
 				<v-divider></v-divider>
-				<v-form class="edit__form" @submit.prevent="addProduct">
-					<v-file-input class="edit__input" accept="image/*" :label="filename || 'Галерея'" multiple name="gallery"
+				<v-form class="admin-form" @submit.prevent="addProduct">
+					<div v-if="form.files.length > 0" class="edit__gallery gallery">
+						<h4 class="edit__title">Галерея</h4>
+						<v-row>
+							<v-col v-for="(image, index) in form.files" :key="image.id" class="gallery__item d-flex child-flex" cols="4">
+								<v-icon v-if="form.files.length > 1" class="gallery__delete" large color="red darken-2" @click="deleteGalleryItem(index)">
+									mdi-delete
+								</v-icon>
+								<v-img :src="`${config.API_URL}${image.attributes.url}`" aspect-ratio="1" cover
+									class="bg-grey-lighten-2">
+									<template v-slot:placeholder>
+										<v-row class="fill-height ma-0" align="center" justify="center">
+											<v-progress-circular indeterminate color="grey-lighten-5"></v-progress-circular>
+										</v-row>
+									</template>
+								</v-img>
+							</v-col>
+						</v-row>
+					</div>
+					<v-file-input class="edit__input" accept="image/*" label="Добавить изображения" multiple name="gallery"
 						@change="onFilePicked" />
-					<v-text-field class="edit__input" v-model="title" name="title" label="Название">
+					<v-text-field class="edit__input" v-model="form.title" name="title" label="Название">
+					</v-text-field>
+					<v-text-field class="edit__input" v-model="form.price" name="price" type="number" label="Цена">
+					</v-text-field>
+					<v-text-field class="edit__input" v-model="form.stock" name="strock" type="number" label="В наличии">
 					</v-text-field>
 					<v-divider></v-divider>
 					<v-card-actions>
@@ -92,6 +113,7 @@
 
 			</v-card>
 		</v-dialog>
+
 		<v-dialog v-model="deletePopup">
 			<v-card>
 
@@ -113,29 +135,31 @@
 	</div>
 </template>
 
-<script lang="ts" setup>
+<script setup>
 import useUploadFile from '~/use/useUploadFile';
 
 const { find, findOne, create, update, delete: del } = useStrapi4()
 
-const editPopup = ref<boolean>(false)
-const deletePopup = ref<boolean>(false)
+const editPopup = ref(false)
+const deletePopup = ref(false)
 
 const config = useRuntimeConfig()
-const products = ref<any>(await find('products', {
+const products = ref(await find('products', {
 	populate: '*'
 }))
+console.log('products')
+console.log(products)
 
-const searchField = ref<string>('')
+const searchField = ref('')
 const searchedProducts = computed(() => {
-	return products.value.data.filter((product: any) => {
+	return products.value.data.filter((product) => {
 		return product.attributes.title.toLowerCase().includes(searchField.value.toLowerCase())
 	})
 })
 
-const currentPage = ref<number>(1)
-const showOnPage: number = 7
-const totalPages = computed((): number => {
+const currentPage = ref(1)
+const showOnPage = 7
+const totalPages = computed(() => {
 	return Math.ceil(searchedProducts.value.length / showOnPage)
 })
 
@@ -143,96 +167,126 @@ const paginatedProducts = computed(() => {
 	return searchedProducts.value.slice((currentPage.value * showOnPage) - showOnPage, currentPage.value * showOnPage)
 })
 
-const title = ref<string>('')
-const files = ref<Blob>(new Blob())
-const isEditing = ref<boolean>(false)
-let editingID: number = 0
-let fileChanged: boolean = false
+const form = reactive({
+	title: '',
+	files: new Blob(),
+	newFiles: new Blob(),
+	stock: 0,
+	price: 0
+})
 
-const onFilePicked = (event: any): void => {
-	files.value = event.target.files
-	console.log(files);
+const isEditing = ref<boolean>(false)
+let editingID = 0
+let fileChanged = false
+
+const onFilePicked = (event) => {
+	form.newFiles = event.target.files
 	
 	if (isEditing.value) {
 		fileChanged = true
 	}
 }
 
-const filename = ref<string>('')
-const editProductPopup = async (id: number): Promise<void> => {
-	const product: any = await findOne('products', id, {
+const editProductPopup = async (id) => {
+	const product = await findOne('products', id, {
 		populate: '*'
 	})
-	title.value = product.data.attributes.title
-	// file.value = product.data.attributes.img.data
-	// filename.value = brand.data.attributes.img.data.attributes.name
+	form.title = product.data.attributes.title
+	// console.log('product')
+	// console.log(product)
+	form.files = product.data.attributes.gallery.data
+	form.stock = product.data.attributes.stock
+	form.price = product.data.attributes.price
 	editPopup.value = true
 	isEditing.value = true
 	editingID = id
 	fileChanged = false
 }
 
-const addProductPopup = (): void => {
-	title.value = ''
-	files.value = new Blob()
-	filename.value = ''
+const deletedGalleryItems = []
+const addProductPopup = () => {
+	form.title = ''
+	form.files = new Blob()
+	form.newFiles = new Blob()
+	form.stock = 0
+	form.price = 0
 	editPopup.value = true
 	isEditing.value = false
 }
 const addProduct = async () => {
-	if (isEditing.value) {
-		// if (fileChanged) {
-		// 	try {
-		// 		const uploadFileResponse: any = await useUploadFile(file.value, 'product', 'img')
-		// 		await update('products', editingID, { img: uploadFileResponse.data[0] })
-		// 	} catch (e) {
-		// 		console.log(e);
-		// 	}
-		// }
-		try {
-			await update('products', editingID, { title: title.value })
-		} catch (e) {
-			console.log(e);
-		}
-		updateProducts()
-		editPopup.value = false
-		return
-	}
+	// if (isEditing.value) {
+	// 	if (fileChanged) {
+	// 		try {
+	// 			const uploadFileResponse: any = await useUploadFile(file.value, 'product', 'img')
+	// 			await update('products', editingID, { img: uploadFileResponse.data[0] })
+	// 		} catch (e) {
+	// 			console.log(e);
+	// 		}
+	// 	}
+	// 	try {
+	// 		await update('products', editingID, {
+	// 			title: form.title,
+	// 			price: form.price,
+	// 			stock: form.stock,
+	// 		})
+	// 	} catch (e) {
+	// 		console.log(e);
+	// 	}
+	// 	updateProducts()
+	// 	editPopup.value = false
+	// 	return
+	// }
 	try {
-		// const uploadFileResponse: any = await useUploadFile(file.value, 'brand', 'img')
-		const productData = {
-			title: title.value,
-			// img: uploadFileResponse.data[0]
-		}
-		await create('products', productData)
-		updateProducts()
-		editPopup.value = false
+		const gallery = []
+		Array.from(form.newFiles).forEach(async (file) => {
+			const response = await useUploadFile(file, 'product', 'gallery')
+			gallery.push()
+		})
+		console.log(gallery);
+		// const productData = {
+		// 	title: form.title,
+		// 	price: form.price,
+		// 	stock: form.stock,
+		// 	img: uploadFileResponse.data[0]
+		// }
+		// await create('products', productData)
+		// updateProducts()
+		// editPopup.value = false
 	} catch (e) {
 		console.log(e);
 	}
 }
 
-let deleteID: number
-const deleteProductPopup = (id: number): void => {
+const deleteGalleryItem = (index) => {
+	deletedGalleryItems.push(form.files[index].id)
+	form.files.splice(index, 1)
+}
+
+let deleteID
+const deleteProductPopup = (id) => {
 	deletePopup.value = true
 	deleteID = id
 }
-const deleteProduct = async (): Promise<void> => {
+const deleteProduct = async () => {
 	if (products.value.data.length - 1 <= showOnPage) {
 		currentPage.value = 1
 	}
-	// const product: any = await findOne('products', deleteID, {
-	// 	populate: '*',
-	// })
-	// const fileID: number = product.data.attributes.img.data.id
+	const product = await findOne('products', deleteID, {
+		populate: '*',
+	})
+	const files = product.data.attributes.gallery.data
+
+	files.forEach(async (item) => {
+		await del('upload/files', item.id)
+	})
 
 	await del('products', deleteID)
-	// await del('upload/files', fileID)
+	
 	updateProducts()
 	deletePopup.value = false
 }
 
-const updateProducts = async (): Promise<void> => {
+const updateProducts = async () => {
 	products.value = await find('products', {
 		populate: '*'
 	})
@@ -240,23 +294,37 @@ const updateProducts = async (): Promise<void> => {
 </script>
 
 <style lang="scss" scoped>
+@import '~/assets/styles/variables';
 .table__item {
 	display: flex;
 	align-items: center;
 	gap: 10px;
 }
 
-.brand__logo {
+.product__img {
 	max-width: 100px;
+	max-height: 150px;
 }
 
 .edit {
-	&__form {
-		padding: 10px 30px;
+	&__title {
+		margin-bottom: 10px;
 	}
+	&__gallery {
+		margin-bottom: 10px;
+	}
+}
 
-	&__input {
-		width: 250px;
+.gallery {
+	&__item {
+		position: relative;
+	}
+	&__delete {
+		position: absolute;
+		top: 0;
+		right: 0;
+		z-index: 10;
+		cursor: pointer;
 	}
 }
 </style>
